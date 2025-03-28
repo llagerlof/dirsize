@@ -14,6 +14,11 @@ Identify the biggest directory and file sizes in the current directory.
    ./dirsize
    ```
 
+3. To include hidden files and directories in the analysis, use the `-h` option:
+   ```bash
+   ./dirsize -h
+   ```
+
 ## Output
 
 - The script lists all files and directories in the current directory along with their sizes.
@@ -26,6 +31,7 @@ Identify the biggest directory and file sizes in the current directory.
 Given the following directory structure:
 ```
 .
+├── .hidden_file (5K)
 ├── file1.txt (10K)
 ├── file2.txt (20K)
 └── subdir/
@@ -33,7 +39,7 @@ Given the following directory structure:
     └── file4.txt (15K)
 ```
 
-Running the script:
+Running the script without `-h`:
 ```bash
 ./dirsize
 ```
@@ -46,7 +52,21 @@ Output:
 TOTAL: 35K
 ```
 
+Running the script with `-h`:
+```bash
+./dirsize -h
+```
+
+Output:
+```
+5K - .hidden_file
+5K - subdir/
+10K - file1.txt
+20K - file2.txt
+TOTAL: 40K
+```
+
 ## Notes
 
-- Hidden files and directories (those starting with `.`) are not included in the output.
+- Hidden files and directories (those starting with `.`) are excluded by default unless the `-h` option is used.
 - The script uses `du` to calculate sizes, so ensure it is available on your system.

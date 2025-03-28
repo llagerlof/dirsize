@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Step 1: List all items (files and directories) in the current directory.
+# Step 2: For each directory, get the total size (recursively). For files, get the file size.
+# Step 3: Sort by size (ascending), then show a final total.
+
+# Collect and display items with sizes
+for item in *; do
+  # Skip if there is no match (empty directory) or hidden items (this uses '*')
+  [ -e "$item" ] || continue 
+
+  if [ -d "$item" ]; then
+    # It's a directory; append slash to name
+    size=$(du -sh "$item" 2>/dev/null | cut -f1)
+    echo "$size - $item/"
+  else
+    # It's a file
+    size=$(du -sh "$item" 2>/dev/null | cut -f1)
+    echo "$size - $item"
+  fi
+done | sort -h
+
+# Step 4: Print the grand total for all top-level items
+total=$(du -shc * 2>/dev/null | tail -n1 | awk '{print $1}')
+echo "TOTAL: $total"

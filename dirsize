@@ -1,25 +1,55 @@
 #!/usr/bin/env bash
 
-# Step 1: List all items (files and directories) in the current directory.
-# Step 2: For each directory, get the total size (recursively). For files, get the file size.
-# Step 3: Sort by size (ascending), then show a final total.
+# dirsize version 1.0.1
 
-# Collect and display items with sizes
-for item in *; do
-  # Skip if there is no match (empty directory) or hidden items (this uses '*')
-  [ -e "$item" ] || continue 
+show_hidden=false
 
-  if [ -d "$item" ]; then
-    # It's a directory; append slash to name
-    size=$(du -sh "$item" 2>/dev/null | cut -f1)
-    echo "$size - $item/"
-  else
-    # It's a file
-    size=$(du -sh "$item" 2>/dev/null | cut -f1)
-    echo "$size - $item"
-  fi
-done | sort -h
+# Parse options
+while getopts ":h" opt; do
+  case $opt in
+    h)
+      show_hidden=true
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND - 1))
 
-# Step 4: Print the grand total for all top-level items
-total=$(du -shc * 2>/dev/null | tail -n1 | awk '{print $1}')
+# If the user wants hidden items, enable 'dotglob'
+# so that * matches hidden files/directories (except . and ..)
+if [ "$show_hidden" = true ]; then
+  shopt -s dotglob
+fi
+
+# Collect items from the current directory
+items=()
+for i in *; do
+  [ -e "$i" ] || continue     # skip if it doesn't exist (e.g. empty dir)
+  items+=("$i")
+done
+
+# If we enabled dotglob, disable it again (just to avoid side effects)
+if [ "$show_hidden" = true ]; then
+  shopt -u dotglob
+fi
+
+# List each item with its size
+# Then sort by size in ascending order (so bigger items end up at the bottom).
+{
+  for item in "${items[@]}"; do
+    if [ -d "$item" ]; then
+      size=$(du -sh "$item" 2>/dev/null | cut -f1)
+      echo "$size - $item/"
+    else
+      size=$(du -sh "$item" 2>/dev/null | cut -f1)
+      echo "$size - $item"
+    fi
+  done
+} | sort -h
+
+# Print final total of all listed items
+total=$(du -shc "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
 echo "TOTAL: $total"

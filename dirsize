@@ -51,5 +51,10 @@ fi
 } | sort -h
 
 # Print final total of all listed items
-total=$(du -shc "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
-echo "TOTAL: $total"
+total_bytes=$(du -scb "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
+if [[ -n "$total_bytes" && "$total_bytes" =~ ^[0-9]+$ ]]; then
+  total_human=$(numfmt --to=iec-i --suffix=B --format='%9.2f' "$total_bytes")
+else
+  total_human="0.00B" # Default value if total_bytes is empty or not a number
+fi
+echo "TOTAL: $total_human"

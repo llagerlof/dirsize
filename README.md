@@ -46,10 +46,10 @@ Running the script without `-h`:
 
 Output:
 ```
-5K - subdir/
 10K - file1.txt
 20K - file2.txt
-TOTAL: 35K
+20K - subdir/
+TOTAL: 50.00KiB
 ```
 
 Running the script with `-h`:
@@ -60,10 +60,10 @@ Running the script with `-h`:
 Output:
 ```
 5K - .hidden_file
-5K - subdir/
 10K - file1.txt
 20K - file2.txt
-TOTAL: 40K
+20K - subdir/
+TOTAL: 55.00KiB
 ```
 
 ## Notes

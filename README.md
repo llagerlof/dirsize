@@ -32,19 +32,14 @@ Preferred setup: clone the project into `~/repos/` and expose the script through
 
 ## Usage
 
-1. Make the script executable:
+1. Run the script in the directory you want to analyze:
    ```bash
-   chmod +x dirsize
+   dirsize
    ```
 
-2. Run the script in the directory you want to analyze:
+2. To include hidden files and directories in the analysis, use the `-h` option:
    ```bash
-   ./dirsize
-   ```
-
-3. To include hidden files and directories in the analysis, use the `-h` option:
-   ```bash
-   ./dirsize -h
+   dirsize -h
    ```
 
 ## Output
@@ -61,7 +56,7 @@ Given the following directory structure:
 .
 ├── .hidden_file (5K)
 ├── file1.txt (10K)
-├── file2.txt (20K)
+├── file2.txt (2.1MB)
 └── subdir/
     ├── file3.txt (5K)
     └── file4.txt (15K)
@@ -69,29 +64,29 @@ Given the following directory structure:
 
 Running the script without `-h`:
 ```bash
-./dirsize
+dirsize
 ```
 
 Output:
 ```
 10K - file1.txt
-20K - file2.txt
 20K - subdir/
-TOTAL: 50.00KiB
+2.1MB - file2.txt
+TOTAL: 2.13MiB
 ```
 
 Running the script with `-h`:
 ```bash
-./dirsize -h
+dirsize -h
 ```
 
 Output:
 ```
 5K - .hidden_file
 10K - file1.txt
-20K - file2.txt
 20K - subdir/
-TOTAL: 55.00KiB
+2.1MB - file2.txt
+TOTAL: 2.13MiB
 ```
 
 ## Notes

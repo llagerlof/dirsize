@@ -1,6 +1,6 @@
 # dirsize
 
-Identify the biggest directory and file sizes in the current directory.
+The goal of this script is to help users identify the largest files and directories in the current directory.
 
 ## Installation
 
@@ -93,3 +93,7 @@ TOTAL: 2.13MiB
 
 - Hidden files and directories (those starting with `.`) are excluded by default unless the `-h` option is used.
 - The script uses `du` to calculate sizes, so ensure it is available on your system.
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.

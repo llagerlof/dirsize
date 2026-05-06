@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# dirsize version 1.0.1
+# dirsize version 1.0.2
 
 show_hidden=false
 
@@ -36,22 +36,24 @@ if [ "$show_hidden" = true ]; then
   shopt -u dotglob
 fi
 
-# List each item with its size
-# Then sort by size in ascending order (so bigger items end up at the bottom).
-{
-  for item in "${items[@]}"; do
-    if [ -d "$item" ]; then
-      size=$(du -sh "$item" 2>/dev/null | cut -f1)
-      echo "$size - $item/"
-    else
-      size=$(du -sh "$item" 2>/dev/null | cut -f1)
-      echo "$size - $item"
-    fi
-  done
-} | sort -h
+# List each item with its size, sorted by size in ascending order
+for item in "${items[@]}"; do
+  size_bytes=$(du -s --block-size=1 "$item" 2>/dev/null | cut -f1)
+  size_human=$(du -sh "$item" 2>/dev/null | cut -f1)
+
+  if [[ -z "$size_bytes" || ! "$size_bytes" =~ ^[0-9]+$ ]]; then
+    continue
+  fi
+
+  if [ -d "$item" ]; then
+    printf '%s\t%s - %s/\n' "$size_bytes" "$size_human" "$item"
+  else
+    printf '%s\t%s - %s\n' "$size_bytes" "$size_human" "$item"
+  fi
+done | sort -n -k1,1 | cut -f2-
 
 # Print final total of all listed items
-total_bytes=$(du -scb "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
+total_bytes=$(du -sc --block-size=1 "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
 if [[ -n "$total_bytes" && "$total_bytes" =~ ^[0-9]+$ ]]; then
   total_human=$(numfmt --to=iec-i --suffix=B --format='%9.2f' "$total_bytes")
 else

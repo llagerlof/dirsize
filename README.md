@@ -2,6 +2,34 @@
 
 Identify the biggest directory and file sizes in the current directory.
 
+## Installation
+
+Preferred setup: clone the project into `~/repos/` and expose the script through `~/.local/bin/`.
+
+1. Clone the repository into `~/repos/`:
+   ```bash
+   mkdir -p ~/repos
+   git clone https://github.com/llagerlof/dirsize ~/repos/dirsize
+   ```
+
+2. Make sure the script is executable:
+   ```bash
+   chmod +x ~/repos/dirsize/dirsize
+   ```
+
+3. Create `~/.local/bin/` if needed and symlink the script there:
+   ```bash
+   mkdir -p ~/.local/bin
+   ln -sf ~/repos/dirsize/dirsize ~/.local/bin/dirsize
+   ```
+
+4. Ensure `~/.local/bin` is in your `PATH`.
+
+5. Run it from any directory:
+   ```bash
+   dirsize
+   ```
+
 ## Usage
 
 1. Make the script executable:

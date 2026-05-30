@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-# dirsize version 1.0.2
+# dirsize version 2.0.0
 
-show_hidden=false
+exclude_hidden=false
 
 # Parse options
 while getopts ":h" opt; do
   case $opt in
     h)
-      show_hidden=true
+      exclude_hidden=true
       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
@@ -18,9 +18,16 @@ while getopts ":h" opt; do
 done
 shift $((OPTIND - 1))
 
-# If the user wants hidden items, enable 'dotglob'
-# so that * matches hidden files/directories (except . and ..)
-if [ "$show_hidden" = true ]; then
+# Preserve the incoming dotglob state in case the script is sourced.
+dotglob_was_set=false
+if shopt -q dotglob; then
+  dotglob_was_set=true
+fi
+
+# Include hidden items by default. Passing -h disables them.
+if [ "$exclude_hidden" = true ]; then
+  shopt -u dotglob
+else
   shopt -s dotglob
 fi
 
@@ -31,8 +38,10 @@ for i in *; do
   items+=("$i")
 done
 
-# If we enabled dotglob, disable it again (just to avoid side effects)
-if [ "$show_hidden" = true ]; then
+# Restore the previous dotglob state.
+if [ "$dotglob_was_set" = true ]; then
+  shopt -s dotglob
+else
   shopt -u dotglob
 fi
 
@@ -55,8 +64,8 @@ done | sort -n -k1,1 | cut -f2-
 # Print final total of all listed items
 total_bytes=$(du -sc --block-size=1 "${items[@]}" 2>/dev/null | tail -n1 | awk '{print $1}')
 if [[ -n "$total_bytes" && "$total_bytes" =~ ^[0-9]+$ ]]; then
-  total_human=$(numfmt --to=iec-i --suffix=B --format='%9.2f' "$total_bytes")
+  total_human=$(numfmt --to=iec-i --suffix=B --format='%9.1f' "$total_bytes")
 else
-  total_human="0.00B" # Default value if total_bytes is empty or not a number
+  total_human="0.0B" # Default value if total_bytes is empty or not a number
 fi
 echo "TOTAL: $total_human"

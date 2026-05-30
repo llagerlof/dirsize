@@ -1,6 +1,6 @@
 # dirsize
 
-The goal of this script is to help users identify the largest files and directories in the current directory.
+`dirsize` lists the top-level files and directories in the current directory, sorted by disk usage from smallest to largest, and prints the total size of the listed items.
 
 ## Installation
 
@@ -37,7 +37,7 @@ Preferred setup: clone the project into `~/repos/` and expose the script through
    dirsize
    ```
 
-2. To include hidden files and directories in the analysis, use the `-h` option:
+2. To exclude hidden files and directories from the analysis, use the `-h` option:
    ```bash
    dirsize -h
    ```
@@ -69,10 +69,11 @@ dirsize
 
 Output:
 ```
+5K - .hidden_file
 10K - file1.txt
 20K - subdir/
 2.1MB - file2.txt
-TOTAL: 2.13MiB
+TOTAL: 2.1MiB
 ```
 
 Running the script with `-h`:
@@ -82,17 +83,28 @@ dirsize -h
 
 Output:
 ```
-5K - .hidden_file
 10K - file1.txt
 20K - subdir/
 2.1MB - file2.txt
-TOTAL: 2.13MiB
+TOTAL: 2.1MiB
 ```
+
+## Testing
+
+Run the regression test suite with:
+
+```bash
+bash tests/test_dirsize.sh
+```
+
+The test creates a temporary directory structure, verifies that hidden items are included by default, verifies that `-h` excludes them, and checks the reported sizes and totals against `du`.
 
 ## Notes
 
-- Hidden files and directories (those starting with `.`) are excluded by default unless the `-h` option is used.
+- Hidden files and directories (those starting with `.`) are included by default.
+- Passing `-h` excludes hidden files and directories from both the listing and the total.
 - The script uses `du` to calculate sizes, so ensure it is available on your system.
+- The script and tests expect GNU `du` and `numfmt`.
 
 ## License
 
